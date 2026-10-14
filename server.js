@@ -2,7 +2,8 @@ const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
 const path = require('path');
-const { WebcastPushConnection } = require('tiktok-live-connector');
+const tiktokModule = require('tiktok-live-connector');
+const TikTokConnector = tiktokModule.TikTokLiveConnection || tiktokModule.WebcastPushConnection || tiktokModule.default || tiktokModule;
 
 const fs = require('fs');
 
@@ -35,6 +36,8 @@ app.get('/', (req, res) => {
   }
 });
 
+const FIXED_TIKTOK_USERNAME = process.env.TIKTOK_USERNAME || 'mendeescriolo';
+
 // Game State
 let gameState = {
   scoreLeft: 0,       // 13
@@ -44,13 +47,14 @@ let gameState = {
   totalGiftsRight: 0,
   timerSeconds: 9 * 60 + 26, // 09:26 inicial
   isLiveConnected: false,
-  tiktokUsername: '',
+  tiktokUsername: FIXED_TIKTOK_USERNAME,
   recentEvents: [],
   winner: null
 };
 
 // TikTok Live Client
 let tiktokConnection = null;
+let reconnectTimer = null;
 
 // Timer interval
 setInterval(() => {
@@ -150,7 +154,7 @@ function connectToTikTok(username) {
   }
 
   gameState.tiktokUsername = username.replace('@', '').trim();
-  tiktokConnection = new WebcastPushConnection(gameState.tiktokUsername, {
+  tiktokConnection = new TikTokConnector(gameState.tiktokUsername, {
     processInitialData: false,
     enableExtendedGiftInfo: true,
     requestPollingIntervalMs: 1000,
@@ -160,14 +164,27 @@ function connectToTikTok(username) {
     }
   });
 
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+
   tiktokConnection.connect().then(state => {
     gameState.isLiveConnected = true;
-    console.log(`Conectado à live do TikTok de: @${gameState.tiktokUsername}`);
+    console.log(`[TikTok] Conectado com SUCESSO à live de: @${gameState.tiktokUsername}`);
     broadcast({ type: 'TIKTOK_STATUS', connected: true, username: gameState.tiktokUsername });
   }).catch(err => {
     gameState.isLiveConnected = false;
-    console.error('Falha ao conectar no TikTok:', err.message);
-    broadcast({ type: 'TIKTOK_STATUS', connected: false, error: err.message });
+    console.log(`[TikTok] @${gameState.tiktokUsername} ainda não está ao vivo ou erro: ${err.message}`);
+    broadcast({ type: 'TIKTOK_STATUS', connected: false, error: err.message, username: gameState.tiktokUsername });
+
+    // Tenta reconectar automaticamente a cada 15 segundos caso a live abra
+    reconnectTimer = setTimeout(() => {
+      if (!gameState.isLiveConnected && gameState.tiktokUsername) {
+        console.log(`[TikTok] Tentando reconectar à live de @${gameState.tiktokUsername}...`);
+        connectToTikTok(gameState.tiktokUsername);
+      }
+    }, 15000);
   });
 
   // Mensagens do Chat
@@ -231,10 +248,16 @@ function connectToTikTok(username) {
   tiktokConnection.on('disconnected', () => {
     gameState.isLiveConnected = false;
     broadcast({ type: 'TIKTOK_STATUS', connected: false });
+    console.log(`[TikTok] Desconectado da live de @${gameState.tiktokUsername}. Tentando reconectar em 10s...`);
+    setTimeout(() => {
+      if (!gameState.isLiveConnected && gameState.tiktokUsername) {
+        connectToTikTok(gameState.tiktokUsername);
+      }
+    }, 10000);
   });
 
   tiktokConnection.on('error', err => {
-    console.error('Erro na conexão TikTok:', err);
+    console.error('Erro na conexão TikTok:', err.message || err);
   });
 }
 
@@ -271,11 +294,16 @@ wss.on('connection', ws => {
 server.listen(PORT, async () => {
   console.log(`====================================================`);
   console.log(` JOGO TIKTOK LIVE STUDIO PRONTO!`);
+  console.log(` Live Fixa Configurada:    @${FIXED_TIKTOK_USERNAME}`);
   console.log(` Opcao 1 (IP Local):       http://127.0.0.1:${PORT}`);
   console.log(` Opcao 2 (IP da Rede):     http://192.168.18.152:${PORT}`);
   console.log(` Opcao 3 (Localhost):      http://localhost:${PORT}`);
   console.log(` Painel de Controle:       http://127.0.0.1:${PORT}/admin.html`);
   console.log(`====================================================`);
+
+  // Conecta automaticamente na live fixa configurada
+  console.log(`[TikTok] Conectando automaticamente em @${FIXED_TIKTOK_USERNAME}...`);
+  connectToTikTok(FIXED_TIKTOK_USERNAME);
 
   // Tenta gerar URL HTTPS publica caso o TikTok Live Studio exija link com dominio
   try {

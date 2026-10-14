@@ -13,7 +13,7 @@ const state = {
   totalGiftsRight: 0,
   timerSeconds: 9 * 60 + 26,
   isLiveConnected: false,
-  tiktokUsername: ''
+  tiktokUsername: 'mendeescriolo'
 };
 
 // ============================================================
@@ -668,6 +668,7 @@ window.addEventListener('resize', () => initHandPositions());
 
 // Iniciação
 window.addEventListener('DOMContentLoaded', () => {
+  if (dockTiktokUser) dockTiktokUser.value = state.tiktokUsername || 'mendeescriolo';
   setTimeout(initHandPositions, 200);
 });
 setTimeout(initHandPositions, 500);
