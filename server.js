@@ -185,26 +185,46 @@ function connectToTikTok(username) {
     }
   });
 
+  // Rastreador de combos/streaks de presentes
+  const giftStreaks = new Map();
+
   // Presentes / Gifts
   tiktokConnection.on('gift', data => {
     const user = data.nickname || data.uniqueId || 'Apoiador';
-    const giftName = (data.giftName || '').toLowerCase();
+    const rawGiftName = data.giftName || '';
+    const giftName = rawGiftName.toLowerCase();
     const repeatCount = data.repeatCount || 1;
+    const streakKey = `${data.userId || user}_${data.giftId || rawGiftName}`;
 
-    // Regras de Presentes:
-    // Rosa Branca (ou presentes claros/específicos) = 5 pontos pro lado direito (22)
-    // Rosa / Rosa Rosa (Rose padrão do TikTok) = 5 pontos pro lado esquerdo (13)
+    let addedCount = repeatCount;
+    // Trata combos/streaks progressivos do TikTok sem duplicar pontos
+    if (data.giftType === 1 && !data.repeatEnd) {
+      const prev = giftStreaks.get(streakKey) || 0;
+      addedCount = repeatCount - prev;
+      giftStreaks.set(streakKey, repeatCount);
+    } else if (data.repeatEnd) {
+      const prev = giftStreaks.get(streakKey) || 0;
+      addedCount = repeatCount - prev;
+      giftStreaks.delete(streakKey);
+    }
+
+    if (addedCount <= 0) addedCount = 1;
+
+    console.log(`🎁 [TIKTOK GIFT] "${rawGiftName}" (x${addedCount}) enviado por @${user}`);
+
+    // Regras de Presentes Oficiais:
+    // 1. Rosa Branca (White Rose / Rosa Branca) -> DIREITA (22) = 5 pontos por presente
+    // 2. Rosa tradicional (Rose / Rosa) -> ESQUERDA (13) = 5 pontos por presente
     if (giftName.includes('branca') || giftName.includes('white')) {
-      const pts = 5 * repeatCount;
-      addPoints('right', pts, user, `Rosa Branca x${repeatCount}`, repeatCount);
+      const pts = 5 * addedCount;
+      addPoints('right', pts, user, `Rosa Branca x${addedCount}`, addedCount);
     } else if (giftName.includes('rose') || giftName.includes('rosa')) {
-      // Rosa tradicional (Rosa/Vermelha)
-      const pts = 5 * repeatCount;
-      addPoints('left', pts, user, `Rosa x${repeatCount}`, repeatCount);
-    } else {
-      // Outros presentes podem somar de acordo com moedas ou valor se configurado
-      const diamonds = data.diamondCount || 1;
-      // Distribui 1 ponto por diamante para o lado correspondente ou ignora
+      const pts = 5 * addedCount;
+      addPoints('left', pts, user, `Rosa x${addedCount}`, addedCount);
+    } else if (giftName.includes('coracao') || giftName.includes('coração') || giftName.includes('heart')) {
+      // Suporte extra caso usem Coração pro lado direito se White Rose não estiver na lista regional
+      const pts = 5 * addedCount;
+      addPoints('right', pts, user, `Coração x${addedCount}`, addedCount);
     }
   });
 
