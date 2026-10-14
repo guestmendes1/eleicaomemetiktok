@@ -1,0 +1,1047 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  background-color: #07090e;
+  font-family: 'Montserrat', sans-serif;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ============================================================
+   CONTAINER PRINCIPAL (Proporção 9:16 Vertical)
+============================================================ */
+.game-wrapper {
+  width: min(100vw, 540px);
+  height: min(100vh, 960px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  background-color: #0e121b;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
+}
+
+/* ============================================================
+   FOTOS DOS CANDIDATOS EM MARCA D'ÁGUA / FUNDO TRANSLÚCIDO
+============================================================ */
+.bg-watermarks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.watermark-candidate {
+  flex: 1;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transition: opacity 0.5s ease;
+}
+
+/* Lado Esquerdo: Lula com opacidade baixa translúcida */
+.watermark-lula {
+  background-image: url('img/lula.jpg');
+  background-position: center 15%;
+  opacity: 0.16;
+  filter: contrast(1.1) saturate(1.2);
+}
+
+/* Lado Direito: Bolsonaro com opacidade baixa translúcida */
+.watermark-bolsonaro {
+  background-image: url('img/bolsonaro.jpg');
+  background-position: center 15%;
+  opacity: 0.16;
+  filter: contrast(1.1) saturate(1.2);
+}
+
+/* Gradiente que mescla o fundo suavemente */
+.bg-overlay-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(14, 18, 27, 0.75) 0%,
+    rgba(14, 18, 27, 0.4) 40%,
+    rgba(14, 18, 27, 0.85) 75%,
+    rgba(7, 9, 14, 0.98) 100%
+  );
+}
+
+/* ============================================================
+   TOPO: TAGS, RELÓGIO E PLACAR GERAL
+============================================================ */
+.top-header {
+  padding: 8px 12px 4px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 10;
+  position: relative;
+}
+
+.header-tags-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.pill {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.sim-pill {
+  background: rgba(22, 28, 40, 0.85);
+  color: #a4b3c7;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(4px);
+}
+
+.live-pill {
+  background: rgba(14, 55, 30, 0.92);
+  color: #38ef7d;
+  border: 1px solid #10b981;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #38ef7d;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #38ef7d;
+  animation: pulseDot 1.2s infinite;
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+/* Grande Relógio Digital Estilo Pod */
+.clock-display {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 50px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: #0b0e17;
+  padding: 4px 26px;
+  border-radius: 22px;
+  border: 2px solid #20283c;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.9), 0 4px 16px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+  line-height: 1;
+}
+
+/* Barra do Placar Geral */
+.scoreboard-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  background: rgba(15, 20, 32, 0.9);
+  backdrop-filter: blur(6px);
+  border-radius: 16px;
+  padding: 6px 12px;
+  border: 1px solid #243048;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.stat-lbl {
+  font-size: 8px;
+  font-weight: 800;
+  color: #8393a8;
+  letter-spacing: 0.8px;
+}
+
+.stat-num {
+  font-size: 19px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 24px;
+  background: #25334d;
+}
+
+.leader-pill {
+  background: #232c3f;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  min-width: 125px;
+  text-align: center;
+  color: #a0aec0;
+}
+
+.leader-pill.lead-red {
+  background: linear-gradient(135deg, #e52d27, #b31217);
+  box-shadow: 0 0 16px rgba(229, 45, 39, 0.65);
+  color: #ffffff;
+}
+
+.leader-pill.lead-blue {
+  background: linear-gradient(135deg, #1e52f0, #133db5);
+  box-shadow: 0 0 16px rgba(30, 82, 240, 0.65);
+  color: #ffffff;
+}
+
+/* Barra de Meta até 1200 Pontos */
+.goal-bar-wrap {
+  width: 100%;
+  margin-top: 1px;
+}
+
+.goal-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  font-weight: 800;
+  color: #ffcb05;
+  margin-bottom: 3px;
+}
+
+.goal-track {
+  width: 100%;
+  height: 7px;
+  background: #141b29;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #27344f;
+}
+
+.goal-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff8c00, #ffcb05);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px rgba(255, 203, 5, 0.7);
+}
+
+/* ============================================================
+   CARDS DE PONTUAÇÃO (METADE SUPERIOR)
+============================================================ */
+.cards-section {
+  display: flex;
+  padding: 4px 10px 0 10px;
+  gap: 10px;
+  z-index: 10;
+  position: relative;
+}
+
+.score-card {
+  flex: 1;
+  border-radius: 16px;
+  padding: 8px 10px 7px 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+/* Card 13 Vermelho */
+.card-red {
+  background: linear-gradient(180deg, rgba(187, 23, 23, 0.88) 0%, rgba(46, 8, 8, 0.92) 100%);
+  border: 2px solid #ea2d2d;
+}
+
+/* Card 22 Azul */
+.card-blue {
+  background: linear-gradient(180deg, rgba(24, 76, 203, 0.88) 0%, rgba(8, 22, 58, 0.92) 100%);
+  border: 2px solid #2a69ff;
+}
+
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 22px;
+}
+
+.candidate-num {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.front-badge {
+  background: #ffb800;
+  color: #211200;
+  font-size: 8px;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 184, 0, 0.8);
+  animation: bounceFront 1s infinite alternate;
+}
+
+@keyframes bounceFront {
+  from { transform: translateY(0); }
+  to { transform: translateY(-3px); }
+}
+
+.score-center {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1px 0 4px 0;
+}
+
+.big-score {
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -2px;
+  color: #ffffff;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8);
+  transition: transform 0.15s ease;
+}
+
+.big-score.pop {
+  transform: scale(1.22);
+}
+
+.score-unit {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Pontos Flutuantes (+1, +5) */
+.floating-points-zone {
+  position: absolute;
+  top: -15px;
+  right: -20px;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.floating-point-el {
+  position: absolute;
+  font-size: 22px;
+  font-weight: 900;
+  color: #38ef7d;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 12px #38ef7d;
+  animation: animFloat 1.2s forwards cubic-bezier(0.1, 0.8, 0.2, 1);
+  white-space: nowrap;
+}
+
+@keyframes animFloat {
+  0% { transform: translate(0, 8px) scale(0.6); opacity: 0; }
+  20% { transform: translate(0, 0) scale(1.3); opacity: 1; }
+  80% { transform: translate(0, -35px) scale(1.1); opacity: 0.9; }
+  100% { transform: translate(0, -50px) scale(0.9); opacity: 0; }
+}
+
+/* Barra de Porcentagem */
+.percent-section {
+  width: 100%;
+}
+
+.percent-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+
+.pct-val {
+  font-weight: 900;
+}
+
+.presents-val {
+  color: #d1d5db;
+  font-size: 9px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.fill-red {
+  background: #ff3b3b;
+  box-shadow: 0 0 8px #ff3b3b;
+}
+
+.fill-blue {
+  background: #3b82f6;
+  box-shadow: 0 0 8px #3b82f6;
+}
+
+/* Ticker dos Votos Recentes */
+.recent-ticker-box {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 7px;
+  padding: 3px 6px;
+  margin-top: 6px;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ticker-text {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: #ffde59;
+}
+
+/* ============================================================
+   CENÁRIO: MESA DE MADEIRA COM AS DUAS URNAS ELETRÔNICAS
+============================================================ */
+.table-stage {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 6px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* Fundo da Mesa e Piso */
+.stage-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.stage-wall {
+  flex: 1;
+  background: radial-gradient(circle at 50% 60%, rgba(45, 54, 72, 0.35) 0%, rgba(15, 20, 30, 0.7) 100%);
+}
+
+.table-top-wood {
+  height: 24px;
+  background: linear-gradient(180deg, #c4996a 0%, #aa7a48 45%, #7e532b 100%);
+  border-top: 3px solid #dfb385;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8), inset 0 2px 2px rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 3;
+}
+
+.wood-bevel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.table-structure {
+  position: relative;
+  height: 120px;
+  display: flex;
+  justify-content: space-around;
+  z-index: 2;
+}
+
+.leg {
+  width: 10px;
+  height: 100%;
+  background: linear-gradient(90deg, #1b2029 0%, #303847 40%, #151922 100%);
+  box-shadow: -2px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.stage-floor {
+  height: 120px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, #7c8798 0%, #606a7b 50%, #464e5c 100%);
+  z-index: 1;
+  box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.6);
+}
+
+.floor-tile-line {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.line-1 { top: 40px; }
+.line-2 { top: 80px; }
+
+/* ============================================================
+   URNAS ELETRÔNICAS REALISTAS
+============================================================ */
+.urnas-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px;
+  position: relative;
+  z-index: 5;
+  margin-bottom: 4px;
+}
+
+.urna-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.urna-chassis {
+  width: 100%;
+  background: linear-gradient(180deg, #e4eaf2 0%, #c4cdd8 60%, #9ca7b5 100%);
+  border-radius: 12px 12px 6px 6px;
+  padding: 6px 7px 7px 7px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.8), inset 0 2px 3px rgba(255, 255, 255, 0.95);
+  border: 2px solid #848f9f;
+  position: relative;
+}
+
+.urna-header-id {
+  position: absolute;
+  top: 3px;
+  right: 10px;
+  font-size: 13px;
+  font-weight: 900;
+  color: #3b4452;
+}
+
+.urna-screen-box {
+  background: #edf3f8;
+  border: 2px solid #4a5463;
+  border-radius: 6px;
+  padding: 4px 6px;
+  color: #111;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  margin-top: 4px;
+}
+
+.screen-title {
+  font-size: 6.5px;
+  font-weight: 800;
+  color: #4b5563;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.screen-digits-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 2px 0;
+}
+
+.screen-digit {
+  width: 24px;
+  height: 28px;
+  border: 2px solid #2d3748;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  background: #ffffff;
+  color: #111;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: all 0.1s ease;
+}
+
+.screen-digit.typed {
+  background: #fef08a;
+  transform: scale(1.08);
+}
+
+.screen-hint {
+  font-size: 6px;
+  font-weight: 700;
+  color: #555e6d;
+}
+
+/* Teclado da Urna */
+.urna-keyboard {
+  background: #20252e;
+  border-radius: 7px;
+  padding: 5px 4px 4px 4px;
+  margin-top: 5px;
+  border: 1px solid #11141a;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.85);
+}
+
+.key-row {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin-bottom: 3px;
+}
+
+.center-row {
+  justify-content: center;
+}
+
+.num-key {
+  width: 22px;
+  height: 18px;
+  background: linear-gradient(180deg, #373e4b 0%, #242932 100%);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  border: none;
+  border-top: 1px solid #4d5766;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.08s, background 0.08s;
+}
+
+.num-key.pressed {
+  transform: translateY(1.5px);
+  background: #1c2027;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
+}
+
+.zero-btn {
+  width: 22px;
+}
+
+.action-keys-row {
+  display: flex;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.act-key {
+  flex: 1;
+  height: 17px;
+  border: none;
+  font-size: 6.5px;
+  font-weight: 900;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  outline: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.btn-branco {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+.btn-corrige {
+  background: #f97316;
+  color: #ffffff;
+  border-bottom: 2px solid #c2410c;
+}
+
+.btn-confirma {
+  background: #00a651;
+  color: #ffffff;
+  border-bottom: 2px solid #006632;
+  font-size: 7px !important;
+}
+
+.btn-confirma.pressed-green {
+  transform: translateY(2px);
+  background: #00e86b;
+  box-shadow: 0 0 12px #00e86b;
+}
+
+/* ============================================================
+   BADGES FLUTUANTES NA FRENTE DA MESA
+============================================================ */
+.floating-vote-badges {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 14px;
+  position: relative;
+  z-index: 12;
+  margin-top: 2px;
+}
+
+.table-badge {
+  flex: 1;
+  border-radius: 12px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+}
+
+.badge-lula {
+  background: linear-gradient(90deg, #7c1212 0%, #3e0707 100%);
+  border: 1px solid #e12727;
+}
+
+.badge-bolso {
+  background: linear-gradient(90deg, #104297 0%, #061e47 100%);
+  border: 1px solid #2a72e5;
+}
+
+.badge-icon {
+  font-size: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+.badge-txt {
+  display: flex;
+  flex-direction: column;
+}
+
+.badge-txt strong {
+  font-size: 10px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.badge-txt span {
+  font-size: 8px;
+  font-weight: 700;
+  color: #ffde59;
+}
+
+/* ============================================================
+   MÃOS REALISTAS COM ANIMAÇÃO FÍSICA
+============================================================ */
+.real-hand-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 82px;
+  pointer-events: none;
+  z-index: 50;
+  will-change: transform;
+  /* Transição suave para movimento físico realista */
+  transition: transform 0.22s cubic-bezier(0.2, 0.85, 0.35, 1.1);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.7));
+}
+
+.hand-image {
+  width: 100%;
+  display: block;
+}
+
+.hand-img-right {
+  transform: scaleX(-1);
+}
+
+/* ============================================================
+   BARRA INFERIOR DE REGRAS
+============================================================ */
+.bottom-rules-bar {
+  background: #090c14;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid #1a2233;
+  z-index: 20;
+  position: relative;
+}
+
+.rule-chip {
+  flex: 1;
+  background: #121724;
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 8.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #202b3f;
+  color: #cbd5e1;
+}
+
+.chip-num {
+  font-size: 9.5px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+.red-chip .chip-num { background: #dc2626; }
+.blue-chip .chip-num { background: #2563eb; }
+
+/* ============================================================
+   OVERLAY DE VITÓRIA (1200 PONTOS)
+============================================================ */
+.victory-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.victory-modal.hidden {
+  display: none;
+}
+
+#confettiCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.victory-content {
+  text-align: center;
+  z-index: 101;
+  animation: zoomVic 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes zoomVic {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.trophy-icon {
+  font-size: 74px;
+  animation: shakeTrophy 1s infinite alternate;
+}
+
+@keyframes shakeTrophy {
+  from { transform: rotate(-8deg) scale(1); }
+  to { transform: rotate(8deg) scale(1.15); }
+}
+
+.victory-title {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin: 8px 0;
+  color: #ffcb05;
+  text-shadow: 0 0 20px rgba(255, 203, 5, 0.8);
+}
+
+.victory-subtitle {
+  font-size: 13px;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+
+.victory-countdown {
+  margin-top: 20px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #38ef7d;
+  background: #10261b;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid #38ef7d;
+  display: inline-block;
+}
+
+/* ============================================================
+   STREAMER DOCK (CONTROLES RÁPIDOS)
+============================================================ */
+.streamer-dock-toggle {
+  position: absolute;
+  bottom: 50px;
+  right: 12px;
+  background: #1a2233;
+  color: #94a3b8;
+  font-size: 15px;
+  padding: 6px 10px;
+  border-radius: 50%;
+  border: 1px solid #2e3e5c;
+  cursor: pointer;
+  z-index: 70;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s;
+}
+
+.streamer-dock-toggle:hover {
+  transform: scale(1.1);
+}
+
+.streamer-dock {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0f1422;
+  border-top: 2px solid #273752;
+  padding: 12px 14px;
+  z-index: 80;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.85);
+}
+
+.streamer-dock.hidden {
+  display: none;
+}
+
+.dock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #fff;
+}
+
+.close-dock {
+  cursor: pointer;
+  font-size: 15px;
+  color: #94a3b8;
+}
+
+.dock-section {
+  margin-bottom: 8px;
+}
+
+.dock-section label {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #8c9cb0;
+  margin-bottom: 4px;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.input-row input {
+  flex: 1;
+  background: #171f30;
+  border: 1px solid #283750;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  outline: none;
+}
+
+.btn-connect {
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.status-indicator {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-top: 3px;
+}
+
+.btn-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.btn-test {
+  background: #1c2436;
+  color: #fff;
+  border: 1px solid #2d3b54;
+  padding: 6px 3px;
+  font-size: 8.5px;
+  font-weight: 800;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-test.red { background: #8b1818; border-color: #d12c2c; }
+.btn-test.blue { background: #1c4b9e; border-color: #3b82f6; }
+.btn-test.yellow { background: #b45309; border-color: #f59e0b; }
+.btn-test.reset { background: #374151; border-color: #4b5563; }
+
+.btn-test:active { transform: scale(0.96); }
+
+.dock-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9.5px;
+  color: #94a3b8;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #1a2336;
+}
+
+.admin-link {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.hidden {
+  display: none !important;
+}

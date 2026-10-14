@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batalha das Urnas - 13 vs 22 (TikTok Live)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Container Principal 9:16 para TikTok Live Studio -->
+  <div class="game-wrapper" id="gameContainer">
+
+    <!-- Fotos dos Candidatos em Marca d'água / Fundo Translúcido -->
+    <div class="bg-watermarks">
+      <div class="watermark-candidate watermark-lula" id="wmLula"></div>
+      <div class="watermark-candidate watermark-bolsonaro" id="wmBolsonaro"></div>
+      <div class="bg-overlay-gradient"></div>
+    </div>
+
+    <!-- ===== TOPO ===== -->
+    <header class="top-header">
+      <div class="header-tags-row">
+        <span class="pill sim-pill">SIMULAÇÃO • JOGO DE ENTRETENIMENTO</span>
+        <span class="pill live-pill" id="livePill">
+          <span class="live-dot"></span> <span id="liveStatusText">AO VIVO</span>
+        </span>
+      </div>
+
+      <!-- Relógio Digital Grande -->
+      <div class="clock-display" id="clockDisplay">09:26</div>
+
+      <!-- Placar Geral Superior -->
+      <div class="scoreboard-bar">
+        <div class="stat-box">
+          <span class="stat-lbl">TOTAL</span>
+          <span class="stat-num" id="statTotal">0</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-box">
+          <span class="stat-lbl">DIFERENÇA</span>
+          <span class="stat-num" id="statDiff">0</span>
+        </div>
+        <div class="leader-pill" id="leaderPill">
+          <span id="leaderText">EMPATE</span>
+        </div>
+      </div>
+
+      <!-- Barra de Meta até 1200 Pontos -->
+      <div class="goal-bar-wrap">
+        <div class="goal-info-row">
+          <span>META PARA REINICIAR: <strong id="targetDisplay">1200</strong> PTS</span>
+          <span id="goalPercent">0%</span>
+        </div>
+        <div class="goal-track">
+          <div class="goal-fill" id="goalBarFill"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== CARDS DE PONTUAÇÃO (METADE SUPERIOR) ===== -->
+    <section class="cards-section">
+      <!-- Card 13 (Vermelho / Lula) -->
+      <div class="score-card card-red" id="cardLeft">
+        <div class="card-header-row">
+          <span class="candidate-num">13</span>
+          <div class="front-badge hidden" id="frontBadgeLeft">👑 NA FRENTE</div>
+        </div>
+
+        <div class="score-center">
+          <div class="floating-points-zone" id="floatContainerLeft"></div>
+          <div class="big-score" id="scoreLeft">0</div>
+          <span class="score-unit">PONTOS</span>
+        </div>
+
+        <div class="percent-section">
+          <div class="percent-labels">
+            <span class="pct-val" id="percentLeft">50.0%</span>
+            <span class="presents-val" id="giftsLeft">🎁 0 presentes</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill fill-red" id="progressLeft" style="width: 50%;"></div>
+          </div>
+        </div>
+
+        <div class="recent-ticker-box">
+          <span class="ticker-text" id="tickerTextLeft">Aguardando votos...</span>
+        </div>
+      </div>
+
+      <!-- Card 22 (Azul / Bolsonaro) -->
+      <div class="score-card card-blue" id="cardRight">
+        <div class="card-header-row">
+          <span class="candidate-num">22</span>
+          <div class="front-badge hidden" id="frontBadgeRight">👑 NA FRENTE</div>
+        </div>
+
+        <div class="score-center">
+          <div class="floating-points-zone" id="floatContainerRight"></div>
+          <div class="big-score" id="scoreRight">0</div>
+          <span class="score-unit">PONTOS</span>
+        </div>
+
+        <div class="percent-section">
+          <div class="percent-labels">
+            <span class="pct-val" id="percentRight">50.0%</span>
+            <span class="presents-val" id="giftsRight">🎁 0 presentes</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill fill-blue" id="progressRight" style="width: 50%;"></div>
+          </div>
+        </div>
+
+        <div class="recent-ticker-box">
+          <span class="ticker-text" id="tickerTextRight">Aguardando votos...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CENÁRIO: MESA DE MADEIRA COM AS DUAS URNAS ELETRÔNICAS ===== -->
+    <section class="table-stage" id="tableStage">
+      
+      <!-- Fundo de Piso e Pernas de Metal da Mesa -->
+      <div class="stage-background">
+        <div class="stage-wall"></div>
+        <div class="table-top-wood">
+          <div class="wood-bevel"></div>
+        </div>
+        <div class="table-structure">
+          <div class="leg leg-left"></div>
+          <div class="leg leg-mid-left"></div>
+          <div class="leg leg-mid-right"></div>
+          <div class="leg leg-right"></div>
+        </div>
+        <div class="stage-floor">
+          <div class="floor-tile-line line-1"></div>
+          <div class="floor-tile-line line-2"></div>
+        </div>
+      </div>
+
+      <!-- URNAS LADO A LADO EM CIMA DA MESA -->
+      <div class="urnas-container">
+        
+        <!-- URNA ELETRÔNICA 1 (13 - ESQUERDA) -->
+        <div class="urna-wrap urna-left" id="urnaWrapL">
+          <div class="urna-chassis">
+            <div class="urna-header-id">1</div>
+            <div class="urna-screen-box">
+              <div class="screen-title">VOTO PARA PRESIDENTE</div>
+              <div class="screen-digits-row">
+                <span class="screen-digit" id="urnaDigitL1">_</span>
+                <span class="screen-digit" id="urnaDigitL2">_</span>
+              </div>
+              <div class="screen-hint">CONFIRMA para confirmar</div>
+            </div>
+
+            <!-- Teclado Numérico -->
+            <div class="urna-keyboard">
+              <div class="key-row">
+                <button type="button" class="num-key" id="keyL1">1</button>
+                <button type="button" class="num-key" id="keyL2">2</button>
+                <button type="button" class="num-key" id="keyL3">3</button>
+              </div>
+              <div class="key-row">
+                <button type="button" class="num-key" id="keyL4">4</button>
+                <button type="button" class="num-key" id="keyL5">5</button>
+                <button type="button" class="num-key" id="keyL6">6</button>
+              </div>
+              <div class="key-row">
+                <button type="button" class="num-key" id="keyL7">7</button>
+                <button type="button" class="num-key" id="keyL8">8</button>
+                <button type="button" class="num-key" id="keyL9">9</button>
+              </div>
+              <div class="key-row center-row">
+                <button type="button" class="num-key zero-btn" id="keyL0">0</button>
+              </div>
+              <div class="action-keys-row">
+                <button type="button" class="act-key btn-branco" id="btnBrancoL">BRANCO</button>
+                <button type="button" class="act-key btn-corrige" id="btnCorrigeL">CORRIGE</button>
+                <button type="button" class="act-key btn-confirma" id="btnConfirmaL">CONFIRMA</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- URNA ELETRÔNICA 2 (22 - DIREITA) -->
+        <div class="urna-wrap urna-right" id="urnaWrapR">
+          <div class="urna-chassis">
+            <div class="urna-header-id">2</div>
+            <div class="urna-screen-box">
+              <div class="screen-title">VOTO PARA PRESIDENTE</div>
+              <div class="screen-digits-row">
+                <span class="screen-digit" id="urnaDigitR1">_</span>
+                <span class="screen-digit" id="urnaDigitR2">_</span>
+              </div>
+              <div class="screen-hint">CONFIRMA para confirmar</div>
+            </div>
+
+            <!-- Teclado Numérico -->
+            <div class="urna-keyboard">
+              <div class="key-row">
+                <button type="button" class="num-key" id="keyR1">1</button>
+                <button type="button" class="num-key" id="keyR2">2</button>
+                <button type="button" class="num-key" id="keyR3">3</button>
+              </div>
+              <div class="key-row">
+                <button type="button" class="num-key" id="keyR4">4</button>
+                <button type="button" class="num-key" id="keyR5">5</button>
+                <button type="button" class="num-key" id="keyR6">6</button>
+              </div>
+              <div class="key-row">
+                <button type="button" class="num-key" id="keyR7">7</button>
+                <button type="button" class="num-key" id="keyR8">8</button>
+                <button type="button" class="num-key" id="keyR9">9</button>
+              </div>
+              <div class="key-row center-row">
+                <button type="button" class="num-key zero-btn" id="keyR0">0</button>
+              </div>
+              <div class="action-keys-row">
+                <button type="button" class="act-key btn-branco" id="btnBrancoR">BRANCO</button>
+                <button type="button" class="act-key btn-corrige" id="btnCorrigeR">CORRIGE</button>
+                <button type="button" class="act-key btn-confirma" id="btnConfirmaR">CONFIRMA</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /urnas-container -->
+
+      <!-- BADGES FLUTUANTES NA FRENTE DA MESA -->
+      <div class="floating-vote-badges">
+        <div class="table-badge badge-lula" id="badgeLula">
+          <div class="badge-icon">🌹</div>
+          <div class="badge-txt">
+            <strong>VOTO NO LULA</strong>
+            <span>ROSA = 5 PTS • CHAT 13 = 1 PT</span>
+          </div>
+        </div>
+
+        <div class="table-badge badge-bolso" id="badgeBolso">
+          <div class="badge-icon">⚪</div>
+          <div class="badge-txt">
+            <strong>VOTO NO BOLSONARO</strong>
+            <span>ROSA BRANCA = 5 PTS • CHAT 22 = 1 PT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MÃOS REALISTAS COM ANIMAÇÃO FÍSICA -->
+      <!-- Mão Esquerda (Digita 1 -> 3 -> CONFIRMA) -->
+      <div class="real-hand-wrap" id="handLeft">
+        <img src="img/mao.png" alt="Mão Votando 13" class="hand-image hand-img-left">
+      </div>
+
+      <!-- Mão Direita (Digita 2 -> 2 -> CONFIRMA) -->
+      <div class="real-hand-wrap" id="handRight">
+        <img src="img/mao.png" alt="Mão Votando 22" class="hand-image hand-img-right">
+      </div>
+
+    </section>
+
+    <!-- ===== RODAPÉ DE REGRAS ===== -->
+    <footer class="bottom-rules-bar">
+      <div class="rule-chip red-chip">
+        <span class="chip-num">13</span>
+        <span>Comente <b>13</b> (+1) ou envie <b>Rosa</b> (+5)</span>
+      </div>
+      <div class="rule-chip blue-chip">
+        <span class="chip-num">22</span>
+        <span>Comente <b>22</b> (+1) ou envie <b>Rosa Branca</b> (+5)</span>
+      </div>
+    </footer>
+
+    <!-- ===== OVERLAY DE VITÓRIA (1200 PONTOS) ===== -->
+    <div class="victory-modal hidden" id="victoryModal">
+      <canvas id="confettiCanvas"></canvas>
+      <div class="victory-content">
+        <div class="trophy-icon">🏆</div>
+        <h2 class="victory-title" id="victoryTitle">13 VENCEU!</h2>
+        <p class="victory-subtitle">A META DE 1200 PONTOS FOI ATINGIDA!</p>
+        <div class="victory-countdown">
+          REINICIANDO EM: <span id="resetCountdown">5</span>s
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DOCK FLUTUANTE DO STREAMER ===== -->
+    <button class="streamer-dock-toggle" id="dockToggle">⚙️</button>
+    <div class="streamer-dock hidden" id="streamerDock">
+      <div class="dock-header">
+        <strong>⚙️ Controles da Live</strong>
+        <span class="close-dock" id="closeDock">✕</span>
+      </div>
+      <div class="dock-section">
+        <label>TikTok @Username:</label>
+        <div class="input-row">
+          <input type="text" id="dockTiktokUser" placeholder="seu_usuario">
+          <button class="btn-connect" id="btnDockConnect">Conectar</button>
+        </div>
+        <div class="status-indicator" id="dockStatus">⚪ Desconectado</div>
+      </div>
+      <div class="dock-section">
+        <label>Testar Digitação e Votos:</label>
+        <div class="btn-grid">
+          <button class="btn-test red" id="testChat13">Chat '13' (+1)</button>
+          <button class="btn-test red" id="testRosa13">Rosa (+5)</button>
+          <button class="btn-test blue" id="testChat22">Chat '22' (+1)</button>
+          <button class="btn-test blue" id="testRosa22">Rosa Branca (+5)</button>
+          <button class="btn-test" id="testAdd100L">+100 no 13</button>
+          <button class="btn-test" id="testAdd100R">+100 no 22</button>
+          <button class="btn-test yellow" id="testWin">Disparar Vitória</button>
+          <button class="btn-test reset" id="testReset">Zerar Placar</button>
+        </div>
+      </div>
+      <div class="dock-footer">
+        <label><input type="checkbox" id="soundToggle" checked> Áudio da Urna (5s)</label>
+        <a href="/admin.html" target="_blank" class="admin-link">↗ Painel Completo</a>
+      </div>
+    </div>
+
+  </div><!-- /game-wrapper -->
+
+  <!-- Áudio nativo da urna eletrônica (5s enviado pelo streamer) -->
+  <audio id="urnaAudioPlayer" src="audio/urna_sound.mp3" preload="auto"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>

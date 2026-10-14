@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Controle - TikTok Live Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+    body { background: #0c101c; color: #fff; padding: 20px; }
+    .admin-container { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 24px; font-weight: 900; color: #ffcb05; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: #161d2d; border-radius: 12px; padding: 18px; border: 1px solid #233048; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    .card-title { font-size: 14px; font-weight: 800; color: #8fa0be; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    /* Conexão TikTok */
+    .input-group { display: flex; gap: 8px; margin-bottom: 10px; }
+    input[type="text"], input[type="number"] {
+      flex: 1; background: #0f1422; border: 1px solid #2c3c58; border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 14px; outline: none;
+    }
+    button {
+      padding: 10px 18px; border-radius: 8px; font-weight: 800; cursor: pointer; border: none; font-size: 13px; transition: transform 0.1s, opacity 0.2s;
+    }
+    button:active { transform: scale(0.97); }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-danger { background: #dc2626; color: #fff; }
+    .btn-success { background: #16a34a; color: #fff; }
+    .btn-warning { background: #d97706; color: #fff; }
+    .btn-dark { background: #334155; color: #fff; }
+
+    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; }
+    .status-offline { background: #451a1a; color: #f87171; border: 1px solid #991b1b; }
+    .status-online { background: #143522; color: #4ade80; border: 1px solid #166534; }
+    
+    /* Placar ao Vivo */
+    .score-summary { display: flex; justify-content: space-around; align-items: center; padding: 15px 0; background: #0e1422; border-radius: 8px; }
+    .team-box { text-align: center; }
+    .team-num { font-size: 32px; font-weight: 900; }
+    .team-13 { color: #ef4444; }
+    .team-22 { color: #3b82f6; }
+    .team-pts { font-size: 20px; font-weight: 900; color: #fff; }
+    .vs-text { font-size: 14px; font-weight: 900; color: #64748b; }
+
+    /* Botões de Ação */
+    .btn-matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .feed-list { height: 180px; overflow-y: auto; background: #0b0f1a; border-radius: 8px; padding: 10px; font-size: 12px; border: 1px solid #1e283d; }
+    .feed-item { padding: 6px 8px; border-bottom: 1px solid #162033; display: flex; justify-content: space-between; align-items: center; }
+    .feed-item:last-child { border-bottom: none; }
+    .feed-user { font-weight: 700; color: #38bdf8; }
+    .feed-desc { color: #cbd5e1; }
+    .feed-pts { font-weight: 900; }
+    .pts-red { color: #f87171; }
+    .pts-blue { color: #60a5fa; }
+
+    .help-box { background: #111a2e; border-left: 4px solid #38bdf8; padding: 12px; border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.6; color: #94a3b8; }
+    .help-box code { background: #090e18; padding: 2px 6px; border-radius: 4px; color: #38ef7d; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <h1>⚙️ Painel de Controle - TikTok Live Game</h1>
+
+    <div class="grid">
+      <!-- Conexão TikTok -->
+      <div class="card">
+        <div class="card-title">1. Conexão com o TikTok Live</div>
+        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">
+          Digite seu @ do TikTok (você precisa já ter iniciado a live no TikTok Live Studio):
+        </p>
+        <div class="input-group">
+          <input type="text" id="usernameInput" placeholder="Ex: seunome_tiktok">
+          <button class="btn-primary" id="btnConnect">Conectar</button>
+          <button class="btn-danger" id="btnDisconnect">Desconectar</button>
+        </div>
+        <div>
+          Status: <span id="statusBadge" class="status-badge status-offline">⚪ Desconectado</span>
+        </div>
+      </div>
+
+      <!-- Configurações de Jogo -->
+      <div class="card">
+        <div class="card-title">2. Meta de Pontos (Auto-Reset)</div>
+        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">
+          Ao atingir esta meta, o jogo comemora a vitória e zera tudo automaticamente:
+        </p>
+        <div class="input-group">
+          <input type="number" id="targetScoreInput" value="1200">
+          <button class="btn-warning" id="btnSaveTarget">Salvar Meta</button>
+          <button class="btn-dark" id="btnResetGame">Zerar Placar Agora</button>
+        </div>
+        <div style="font-size: 12px; color: #cbd5e1; margin-top: 4px;">
+          Meta Atual: <strong id="currentTargetVal" style="color: #ffcb05;">1200</strong> pontos.
+        </div>
+      </div>
+    </div>
+
+    <!-- Placar ao Vivo -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-title">Placar Atual em Tempo Real</div>
+      <div class="score-summary">
+        <div class="team-box">
+          <div class="team-num team-13">13</div>
+          <div class="team-pts" id="liveScore13">0 PTS</div>
+          <span style="font-size: 11px; color: #94a3b8;" id="giftsCount13">0 presentes</span>
+        </div>
+        <div class="vs-text">VS</div>
+        <div class="team-box">
+          <div class="team-num team-22">22</div>
+          <div class="team-pts" id="liveScore22">0 PTS</div>
+          <span style="font-size: 11px; color: #94a3b8;" id="giftsCount22">0 presentes</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulação & Testes Manuais -->
+    <div class="grid">
+      <div class="card">
+        <div class="card-title" style="color: #ef4444;">🔴 Testar Lado 13 (Esquerda)</div>
+        <div class="btn-matrix">
+          <button class="btn-danger" onclick="addPts('left', 1, 'Chat 13')">+1 (Chat '13')</button>
+          <button class="btn-danger" onclick="addPts('left', 5, 'Rosa x1', 1)">+5 (Rosa Rosa)</button>
+          <button class="btn-danger" onclick="addPts('left', 25, 'Rosa x5', 5)">+25 (5 Rosas)</button>
+          <button class="btn-danger" onclick="addPts('left', 100, 'Super Voto')">+100 Pontos</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color: #3b82f6;">🔵 Testar Lado 22 (Direita)</div>
+        <div class="btn-matrix">
+          <button class="btn-primary" onclick="addPts('right', 1, 'Chat 22')">+1 (Chat '22')</button>
+          <button class="btn-primary" onclick="addPts('right', 5, 'Rosa Branca x1', 1)">+5 (Rosa Branca)</button>
+          <button class="btn-primary" onclick="addPts('right', 25, 'Rosa Branca x5', 5)">+25 (5 Rosas Brancas)</button>
+          <button class="btn-primary" onclick="addPts('right', 100, 'Super Voto')">+100 Pontos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed de Atividades Recentes -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-title">Histórico de Votos e Presentes da Live</div>
+      <div class="feed-list" id="feedList">
+        <div style="color: #64748b; text-align: center; padding: 20px;">Nenhum evento registrado ainda.</div>
+      </div>
+    </div>
+
+    <!-- Instruções para o TikTok Live Studio -->
+    <div class="card help-box">
+      <strong>Como colocar no TikTok Live Studio (PC):</strong><br>
+      1. No TikTok Live Studio, clique em <strong>Adicionar Fonte</strong> &gt; <strong>Link / Fonte de Navegador</strong>.<br>
+      2. No campo URL, digite: <code>http://localhost:3000</code>.<br>
+      3. Defina a resolução para <strong>1080 x 1920</strong> (Vertical) ou ajuste na tela.<br>
+      4. Pronto! O jogo atualizará automaticamente e emitirá os sons da urna eletrônica ao vivo!
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(location.search);
+    const customServer = urlParams.get('server') || localStorage.getItem('game_server_url');
+    let wsUrl;
+    if (customServer) {
+      wsUrl = customServer.startsWith('ws') ? customServer : `wss://${customServer.replace(/^https?:\/\//, '')}`;
+    } else {
+      wsUrl = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host;
+    }
+
+    function initWS() {
+      socket = new WebSocket(wsUrl);
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'INIT_STATE' || data.type === 'GAME_RESET' || data.type === 'POINTS_ADDED') {
+          const st = data.state || data;
+          document.getElementById('liveScore13').textContent = (st.scoreLeft || 0) + ' PTS';
+          document.getElementById('liveScore22').textContent = (st.scoreRight || 0) + ' PTS';
+          document.getElementById('giftsCount13').textContent = (st.totalGiftsLeft || 0) + ' presentes';
+          document.getElementById('giftsCount22').textContent = (st.totalGiftsRight || 0) + ' presentes';
+          document.getElementById('currentTargetVal').textContent = st.targetScore || 1200;
+
+          if (data.state && data.state.recentEvents) {
+            renderFeed(data.state.recentEvents);
+          }
+        }
+        if (data.type === 'TIKTOK_STATUS') {
+          const badge = document.getElementById('statusBadge');
+          if (data.connected) {
+            badge.className = 'status-badge status-online';
+            badge.textContent = '🟢 Conectado em @' + data.username;
+          } else {
+            badge.className = 'status-badge status-offline';
+            badge.textContent = data.error ? '🔴 Erro: ' + data.error : '⚪ Desconectado';
+          }
+        }
+      };
+      socket.onclose = () => setTimeout(initWS, 2000);
+    }
+    initWS();
+
+    function renderFeed(events) {
+      const list = document.getElementById('feedList');
+      if (!events || events.length === 0) return;
+      list.innerHTML = events.map(e => `
+        <div class="feed-item">
+          <div>
+            <span class="feed-user">${e.user}</span>: 
+            <span class="feed-desc">${e.reason}</span>
+          </div>
+          <span class="feed-pts ${e.side === 'left' ? 'pts-red' : 'pts-blue'}">+${e.points} pts (${e.side === 'left' ? '13' : '22'})</span>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('btnConnect').onclick = () => {
+      const username = document.getElementById('usernameInput').value.trim();
+      if (!username) return alert('Digite seu @ do TikTok!');
+      socket.send(JSON.stringify({ action: 'CONNECT_TIKTOK', username }));
+    };
+
+    document.getElementById('btnDisconnect').onclick = () => {
+      socket.send(JSON.stringify({ action: 'DISCONNECT_TIKTOK' }));
+    };
+
+    document.getElementById('btnSaveTarget').onclick = () => {
+      const target = parseInt(document.getElementById('targetScoreInput').value) || 1200;
+      socket.send(JSON.stringify({ action: 'SET_TARGET', target }));
+      alert('Meta atualizada para ' + target + ' pontos!');
+    };
+
+    document.getElementById('btnResetGame').onclick = () => {
+      if (confirm('Deseja zerar o placar agora?')) {
+        socket.send(JSON.stringify({ action: 'RESET_GAME' }));
+      }
+    };
+
+    function addPts(side, points, reason, count = 1) {
+      socket.send(JSON.stringify({
+        action: 'ADD_POINTS',
+        side,
+        points,
+        user: '@Admin_Teste',
+        reason,
+        count
+      }));
+    }
+  </script>
+</body>
+</html>
